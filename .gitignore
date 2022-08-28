@@ -1,0 +1,12 @@
+# PyCharm IDE
+.idea
+__pycache__
+
+# vscode
+.vscode
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints
+
+# Data directory
+output/

@@ -1,0 +1,17 @@
+name: sd_playground
+channels:
+  - defaults
+  - pytorch
+dependencies:
+  - python=3.8.5
+  - pip=20.3
+  - cudatoolkit=11.3
+  - pytorch=1.11.0
+  - numpy=1.19.2
+  - pip:
+    - diffusers==0.2.4
+    - transformers==4.19.2
+    - scipy
+    - matplotlib
+    - fire==0.4.0
+
