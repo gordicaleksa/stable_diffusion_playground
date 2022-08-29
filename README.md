@@ -80,7 +80,8 @@ As an example I'll take the 2 images from above and interpolate between them her
 <img src="imgs/interpolate/interpolation_grid.jpg" width="800px">
 </p>
 
-Note: I generated 200 images but had to subsample 32 only for this image.
+Note: I generated 200 images but had to subsample to only 32 for this grid image. But in general there are always
+sudden jumps in the decoded image space unless you move with very fine steps through the latent space.
 
 ### REPRODUCE mode
 
