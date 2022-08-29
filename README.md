@@ -35,18 +35,21 @@ using the code from the [main](https://github.com/huggingface/diffusers/blob/mai
 
 ## How to use this code
 
-First a brief explanation of certain script arguments.
+The script can be run using an `IDE` (such as vscode, PyCharm, etc.) but it can also be run via `command line` thanks to `fire` package. `fire` makes things much more concise than using `argparse`! E.g. if there is an argument in the `generate_images` function with name `<arg_name>` then you can call `python generate_images.py --<arg_name> <arg_value>`.
+
+Next up - a brief explanation of certain script arguments.
 
 `output_dir_name` is the name of the output directory. 
 * Your images will be stored at `output/<output_dir_name>/imgs`.
-* Your latents will be stored at `output/<output_dir_name>/latents`
-* Your metadata will be stored inside of the `user_comments` exif tag if `save_metadata_to_img`==`True` otherwise it'll be saved to `output/<output_dir_name>/metadata`
+* Your latents will be stored at `output/<output_dir_name>/latents`.
+* Your metadata will be stored inside of the `user_comment` exif tag if `save_metadata_to_img`==`True` otherwise it'll be saved to `output/<output_dir_name>/metadata`.
+
 All of this relative to from where you're running the code.
 
 `prompt`, `guidance_scale`, `seed`, `num_inference_steps` are the main knobs you have at your disposal to control image generation.
-Check out the code comments for more info.
+Check out the [code comments](https://github.com/gordicaleksa/stable_diffusion_playground/blob/main/generate_images.py) for more info.
 
-The script has **3 modes of execution** - let me explain each of them below.
+Finally, the script has **3 modes of execution** - let me explain each of them below.
 
 ### GENERATE_DIVERSE mode
 
@@ -58,7 +61,10 @@ Use the main knobs as described above to control the content and quality of the 
 
 Here are some images I generated using this mode:
 
-# TODO: add images
+<p align="center">
+<img src="imgs/generate_diverse/000015.jpg" width="400px">
+<img src="imgs/generate_diverse/000055.jpg" width="400px">
+</p>
 
 ### INTERPOLATE mode
 
@@ -66,11 +72,11 @@ Set execution_mode=`INTERPOLATE`.
 
 There are 2 ways to run this mode:
 1. Run `GENERATE_DIVERSE` and pick the 2 images you like. Grab paths to their latents (you'll find them under `output/<output_dir_name>/latents`) and specify them inside of `src_latent_path` and `trg_latent_path`. After this the code will spherically interpolate `num_imgs` between them and by doing that generate a (mostly) smooth transition from source image into the target one.
-2. Don't specify the latents - they will be generated on the fly so you don't know how your source and target image look like. Everything else remains the same.
+2. Don't specify the latents - they will be generated on the fly so you won't know how your source and target image look like upfront. Everything else remains the same.
 
 As an example I'll take the 2 images from above and interpolate between them here is the resulting gif:
 
-# TODO: add images
+TODO: add gif
 
 ### REPRODUCE mode
 
@@ -84,9 +90,11 @@ After this the script will reconstruct the original image - showcasing the repro
 
 ## Hardware requirements
 
-You need a GPU that has at least `8 GBs` of VRAM to run this at `512x512` in `fp16` precision (set `fp16` argument to `True`).
+You need a GPU that has at least `8 GBs` of VRAM to run this at `512x512` in `fp16` precision.
 
 If you wish to run it in `fp32` precision you will need `~16 GBs` of VRAM (unless you're willing to sacrifice resolution).
+
+`fp16` flag controls whether you load the `fp16` or `fp32` weights.
 
 ## Learning material
 
@@ -103,14 +111,14 @@ And here is a deep dive of the stable diffusion codebase: <TODO: add the video l
 
 ## Connect With Me
 
-💼 [LinkedIn](https://www.linkedin.com/in/aleksagordic/) 
-🐦 [Twitter](https://twitter.com/gordic_aleksa)
-👨‍👩‍👧‍👦 [Discord](https://discord.gg/peBrCpheKE)
+💼 [LinkedIn](https://www.linkedin.com/in/aleksagordic/)<br/>
+🐦 [Twitter](https://twitter.com/gordic_aleksa)<br/>
+👨‍👩‍👧‍👦 [Discord](https://discord.gg/peBrCpheKE)<br/>
 
-📺 [YouTube](https://www.youtube.com/c/TheAIEpiphany/)
-📚 [Medium](https://gordicaleksa.medium.com/)
-💻 [GitHub](https://github.com/gordicaleksa)
-📢 [AI Newsletter - one day heh](https://aiepiphany.substack.com/)
+📺 [YouTube](https://www.youtube.com/c/TheAIEpiphany/)<br/>
+📚 [Medium](https://gordicaleksa.medium.com/)<br/>
+💻 [GitHub](https://github.com/gordicaleksa)<br/>
+📢 [AI Newsletter - one day heh](https://aiepiphany.substack.com/)<br/>
 
 ## Acknowledgements
 
