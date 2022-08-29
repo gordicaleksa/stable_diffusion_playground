@@ -1,4 +1,10 @@
 ## Generate images using stable diffusion
+
+The main benefit of using this code: reproducibility! You'll know exactly how you created all of your images!
+
+<p align="center">
+<img src="imgs/000000.jpg" width="500"/>
+</p>
     
 ## Setup
 
@@ -14,6 +20,15 @@ That's it! It should work out-of-the-box executing environment.yml file which de
 
 **Important note:** you have to locally patch the `pipeline_stable_diffusion.py` file from the `diffusers 0.2.4` lib
 using the code from the [main](https://github.com/huggingface/diffusers/blob/main/src/diffusers/pipelines/stable_diffusion/pipeline_stable_diffusion.py) branch. The changes I rely (having `latents` as an argument) on still haven't propagated to the pip package.
+
+## Hardware requirements
+
+You need a GPU that has at least 8 GBs of VRAM to run this at 512x512, fp16.
+TODO: Describe this in more detail.
+
+## TODOs
+
+* Potentially try and integrate the information needed to reproduce the results into image metadata or via steganography.
 
 ## Learning material
 
