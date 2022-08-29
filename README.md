@@ -12,6 +12,14 @@ Follow the next steps to run this code:
 
 That's it! It should work out-of-the-box executing environment.yml file which deals with dependencies. <br/>
 
+**Important note:** you have to locally patch the `pipeline_stable_diffusion.py` file from the `diffusers 0.2.4` lib
+using the code from the [main](https://github.com/huggingface/diffusers/blob/main/src/diffusers/pipelines/stable_diffusion/pipeline_stable_diffusion.py) branch. The changes I rely (having `latents` as an argument) on still haven't propagated to the pip package.
+
+## Learning material
+
+Here is a video walk-through of this repo: <TODO: add the video link once uploaded>
+And here is a deep dive of the stable diffusion codebase: <TODO: add the video link once uploaded>
+
 ## Acknowledgements
 
 Took inspiration from [Karpathy's gist](https://gist.github.com/karpathy/00103b0037c5aaea32fe1da1af553355).
