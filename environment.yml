@@ -9,9 +9,9 @@ dependencies:
   - pytorch=1.11.0
   - numpy=1.19.2
   - pip:
-    - diffusers==0.2.4
+    - diffusers==0.2.4  # Will update as soon as the new version comes out! Until then you have to patch it! :')
     - transformers==4.19.2
-    - scipy
-    - matplotlib
+    - scipy==1.9.1
+    - matplotlib==3.5.3
     - fire==0.4.0
 
