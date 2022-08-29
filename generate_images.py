@@ -20,7 +20,10 @@ class ExecutionMode(enum.Enum):
 
 
 def slerp(t, v0, v1, DOT_THRESHOLD=0.9995):
-    """ helper function to spherically interpolate two arrays v1 v2 """
+    """ helper function to spherically interpolate two arrays v1 v2 
+    
+    Taken from: https://gist.github.com/karpathy/00103b0037c5aaea32fe1da1af553355
+    """
 
     if not isinstance(v0, np.ndarray):
         inputs_are_torch = True
@@ -60,25 +63,22 @@ def save_metadata(meta_dir, prompt, num_inference_steps, guidance_scale):
     with open(os.path.join(meta_dir, generate_name(meta_dir, suffix='json')), 'w') as f:
         json.dump(data, f)
 
-
-def run(
+# TODO: refactor the code.
+def run(  # fire makes things much more concise than argparse! :))
         # --------------------------------------
-        # args you probably want to change
-        name='ai_epiphany',  # name of the output directory
-        execution_mode=ExecutionMode.INTERPOLATE,
-        prompt="a painting of an ai robot having an epiphany moment",
+        name='ai_epiphany',  # Name of the output directory.
+        execution_mode=ExecutionMode.GENERATE_DIVERSE,  # Choose between diverse generation and interpolation.
+        prompt="a painting of an ai robot having an epiphany moment",  # Unleash your inner neural network whisperer.
         num_inference_steps=50,  # More (e.g. 100, 200 etc) can create slightly better images.
-        guidance_scale=7.5,  # Can depend on the prompt. Usually somewhere between 3-10 is good.
+        guidance_scale=7.5,  # Complete black magic. Usually somewhere between 3-10 is good - but experiment.
         num_imgs=5,  # How many images you want to generate in this run.
-        # --------------------------------------
-        # args you probably don't want to change
-        seed=23,  # I love it more than 42
-        width=512,
+        seed=23,  # I love it more than 42.
+        width=512,  # Make sure it's a multiple of 8.
         height=512,
         fp16=True,  # Set to True unless you have ~16 GBs of VRAM.
-        src_latent_path="T:\\YouTube_Code\\8_Stable_Diffusion\\stable-diffusion\\ai_epiphany\\latents\\000000.npy",
+        src_latent_path=None,  # Set the latent of the 2 images you like (useful for INTERPOLATE mode)
         trg_latent_path=None,
-        metadata_path="T:\\YouTube_Code\\8_Stable_Diffusion\\stable-diffusion\\ai_epiphany\\meta\\000000.json",
+        metadata_path=None,  # Used only in the REPRODUCE branch.
         # --------------------------------------
 ):
     assert torch.cuda.is_available(), "You need a GPU to run this script."
@@ -126,22 +126,6 @@ def run(
             save_metadata(meta_dir, prompt, num_inference_steps, guidance_scale)
             np.save(os.path.join(latents_dir, generate_name(latents_dir, suffix='npy')), init_latent.cpu().numpy())
 
-    elif execution_mode == execution_mode.REPRODUCE:
-        assert src_latent_path, 'You need to provide the latent path if you wish to reproduce an image.'
-        assert metadata_path, 'You need to provide the metadata path if you wish to reproduce an image.'
-        with open(metadata_path) as metadata_file:
-            metadata = json.load(metadata_file)
-        init = torch.from_numpy(np.load(src_latent_path)).to(device)
-        with autocast(device):
-            image = pipe(
-                **metadata,
-                latents=init,
-                output_type='npy',
-                # as long as it's not pil it'll return numpy with the current imp of StableDiffusionPipeline
-            )["sample"][0]
-        plt.imshow((image * 255).astype(np.uint8));
-        plt.show()
-
     elif execution_mode == execution_mode.INTERPOLATE:
         if src_latent_path and trg_latent_path:
             print('Loading existing source and target latents.')
@@ -172,6 +156,23 @@ def run(
                 )["sample"][0]
 
             image.save(os.path.join(imgs_dir, generate_name(imgs_dir, suffix='jpg')))
+
+    elif execution_mode == execution_mode.REPRODUCE:
+        assert src_latent_path, 'You need to provide the latent path if you wish to reproduce an image.'
+        assert metadata_path, 'You need to provide the metadata path if you wish to reproduce an image.'
+        with open(metadata_path) as metadata_file:
+            metadata = json.load(metadata_file)
+        init = torch.from_numpy(np.load(src_latent_path)).to(device)
+        with autocast(device):
+            image = pipe(
+                **metadata,
+                latents=init,
+                output_type='npy',
+                # as long as it's not pil it'll return numpy with the current imp of StableDiffusionPipeline
+            )["sample"][0]
+
+        plt.imshow((image * 255).astype(np.uint8));
+        plt.show()
     else:
         print(f'Execution mode {execution_mode} not supported.')
 
