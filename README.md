@@ -2,8 +2,16 @@
 
 The main benefit of using this code: reproducibility! You'll know exactly how you created all of your images!
 
+Instructions and much more coming soon! 
+
+Until then here are some images generated using the prompt:<br/>
+"a painting of an ai robot having an epiphany moment"
 <p align="center">
-<img src="imgs/000000.jpg" width="500"/>
+<img src="imgs/frame26.jpg" width="400px">
+<img src="imgs/frame84.jpg" width="400px">
+
+<img src="imgs/frame15.jpg" width="400px">
+<img src="imgs/frame151.jpg" width="400px">
 </p>
     
 ## Setup
