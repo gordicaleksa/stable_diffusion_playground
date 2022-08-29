@@ -6,18 +6,22 @@ The script supports 3 modes of execution:
 * INTERPOLATE - Choose 2 images (via `(src|trg)_latent_path`) and interpolate betweeen them.
 
 Note:
-    You'll have to run "huggingface-cli login" the first time so that you can access the model weights.
+    * You'll have to run "huggingface-cli login" the first time so that you can access the model weights.
+    * The script currently works only with jpg images. Exif package doesn't play nicely with png, etc.
 """
 
 import enum
+import functools
 import json
 import os
 
 from diffusers import StableDiffusionPipeline
 from diffusers.schedulers import DDIMScheduler, LMSDiscreteScheduler, PNDMScheduler
+import exif
 import fire
 import matplotlib.pyplot as plt
 import numpy as np
+import cv2 as cv
 import torch
 from torch import autocast
 
@@ -26,6 +30,9 @@ class ExecutionMode(enum.Enum):
     GENERATE_DIVERSE = 0,  # Generate a set of diverse images given a prompt.
     REPRODUCE = 1,  # Reproduce an image given its latent (`src_latent_path`) and metadata (`metadata_path`)
     INTERPOLATE = 2  # Pick 2 images (via (src|trg)_latent_path) and interpolate betweeen them.
+
+
+EXIF_KEY = 'user_comment'  # This is where we store metadata if `save_metadata_to_img` set to True.
 
 
 def interpolate(t, v0, v1, DOT_THRESHOLD=0.9995):
@@ -64,16 +71,35 @@ def generate_name(output_dir_path, suffix='jpg'):
     return f'{prefix}.{suffix}'
 
 
-# TODO: maybe save this directly to image metadata or via steganography.
-def save_metadata(meta_dir, prompt, num_inference_steps, guidance_scale):
-    """Saves crucial metadata information to a json file."""
+def extract_metadata(metadata_path):
+    if metadata_path.endswith('.jpg'):
+        with open(metadata_path, 'rb') as img_file:
+            metadata = json.loads(exif.Image(img_file).get(EXIF_KEY))
+    else:
+        with open(metadata_path) as metadata_file:
+            metadata = json.load(metadata_file)
+    return metadata
+
+
+def save_img_metadata(save_metadata_to_img, meta_dir, imgs_dir, image, prompt, num_inference_steps, guidance_scale):
+    """Saves crucial metadata information to a json file or directly to an image."""
     metadata = {  # Feel free to add anything else you might need.
         'prompt': prompt,
         'num_steps': num_inference_steps,
         'scale': guidance_scale
     }
-    with open(os.path.join(meta_dir, generate_name(meta_dir, suffix='json')), 'w') as metadata_file:
-        json.dump(metadata, metadata_file)
+
+    if save_metadata_to_img:  # Store metadata directly inside of the image. 🧠 :)
+        metadata_str = json.dumps(metadata)
+        exif_img = exif.Image(cv.imencode('.jpg', np.asarray(image)[...,::-1])[1].tobytes())  # Check out https://exif.readthedocs.io/en/latest/usage.html
+        exif_img.user_comment = metadata_str  # Saving the generation metadata into the user_comment field. :)
+        with open(os.path.join(imgs_dir, generate_name(imgs_dir, suffix='jpg')), 'wb') as img_file:
+            img_file.write(exif_img.get_file())
+
+    else:  # Separately save image and metadata.
+        image.save(os.path.join(imgs_dir, generate_name(imgs_dir, suffix='jpg')))
+        with open(os.path.join(meta_dir, generate_name(meta_dir, suffix='json')), 'w') as metadata_file:
+            json.dump(metadata, metadata_file)
 
 
 def generate_images(
@@ -95,6 +121,7 @@ def generate_images(
 
         ##### you'll set this one once and never touch it again depending on your HW #####
         fp16=True,  # Set to True unless you have ~16 GBs of VRAM.
+        save_metadata_to_img=True,  # If False we'll save metadata in a separate file otherwise we store it inside of the image.
 ):
     assert torch.cuda.is_available(), "You need a GPU to run this script."
     assert height % 8 == 0 and width % 8 == 0, f"Width and height need to be a multiple of 8, got (w,h)=({width},{height})."
@@ -109,7 +136,11 @@ def generate_images(
     meta_dir = os.path.join(root_dir, "meta")
     os.makedirs(imgs_dir, exist_ok=True)
     os.makedirs(latents_dir, exist_ok=True)
-    os.makedirs(meta_dir, exist_ok=True)
+    if not save_metadata_to_img:  # Only create metadata dir if we need it.
+        os.makedirs(meta_dir, exist_ok=True)
+
+    # So that we don't have to pass these each time - they don't change...just a syntactic sugar.
+    save_img_metadata_short = functools.partial(save_img_metadata, save_metadata_to_img, meta_dir, imgs_dir)
 
     # Hardcoded the recommended scheduler - feel free to play with it.
     lms = LMSDiscreteScheduler(beta_start=0.00085, beta_end=0.012, beta_schedule="scaled_linear")
@@ -135,11 +166,10 @@ def generate_images(
                     guidance_scale=guidance_scale
                 )["sample"][0]
 
-            image.save(os.path.join(imgs_dir, generate_name(imgs_dir, suffix='jpg')))
             # Make sure generation is reproducible by saving the latent and metadata.
             # TODO: is there some clever python mechanism that can enable me to automatically fetch all input arg names & passed values?
             # Couldn't find anything in inspect...
-            save_metadata(meta_dir, prompt, num_inference_steps, guidance_scale)
+            save_img_metadata_short(image, prompt, num_inference_steps, guidance_scale)
             np.save(os.path.join(latents_dir, generate_name(latents_dir, suffix='npy')), init_latent.cpu().numpy())
 
     elif execution_mode == execution_mode.INTERPOLATE:
@@ -155,8 +185,6 @@ def generate_images(
             np.save(os.path.join(latents_dir, generate_name(latents_dir, suffix='npy')), src_init.cpu().numpy())
             np.save(os.path.join(latents_dir, generate_name(latents_dir, suffix='npy')), trg_init.cpu().numpy())
         
-        # Make sure generation is reproducible.
-        save_metadata(meta_dir, prompt, num_inference_steps, guidance_scale)
         for i, t in enumerate(np.concatenate([[0], np.linspace(0, 1, num_imgs)])):
             if i == 0:
                 init_latent = trg_init  # Make sure you're happy with the target image before you waste too much time.
@@ -171,14 +199,14 @@ def generate_images(
                     guidance_scale=guidance_scale
                 )["sample"][0]
 
-            image.save(os.path.join(imgs_dir, generate_name(imgs_dir, suffix='jpg')))
+            # Make sure generation is reproducible.
+            save_img_metadata_short(image, prompt, num_inference_steps, guidance_scale)
 
-    elif execution_mode == execution_mode.REPRODUCE:
+    elif execution_mode == execution_mode.REPRODUCE:        
         assert src_latent_path, 'You need to provide the latent path if you wish to reproduce an image.'
-        assert metadata_path, 'You need to provide the metadata path if you wish to reproduce an image.'
+        assert metadata_path, 'You need to provide the metadata file/image with metadata if you wish to reproduce an image.'
 
-        with open(metadata_path) as metadata_file:
-            metadata = json.load(metadata_file)
+        metadata = extract_metadata(metadata_path)
         init_latent = torch.from_numpy(np.load(src_latent_path)).to(device)
 
         with autocast(device):

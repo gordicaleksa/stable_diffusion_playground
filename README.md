@@ -1,4 +1,4 @@
-## Generate images using stable diffusion
+## Stable Diffusion Playground | 💻 + 🎨 = ❤️
 
 The main benefit of using this code: reproducibility! You'll know exactly how you created all of your images!
 
