@@ -31,16 +31,20 @@ using the code from the [main](https://github.com/huggingface/diffusers/blob/mai
 
 ## Hardware requirements
 
-You need a GPU that has at least 8 GBs of VRAM to run this at 512x512, fp16.
-TODO: Describe this in more detail.
+You need a GPU that has at least 8 GBs of VRAM to run this at `512x512` in `fp16` precision.
 
-## TODOs
-
-* Potentially try and integrate the information needed to reproduce the results into image metadata or via steganography.
+If you wish to run it in `fp32` precision you will need ~16 GBs of VRAM (unless you're willing to sacrifice resolution).
 
 ## Learning material
 
-Here is a video walk-through of this repo: <TODO: add the video link once uploaded> (the commit I used in the video is [this one](https://github.com/gordicaleksa/stable_diffusion_playground/commit/aa19a6e58f3a545c364017230df38ef42fac4307))
+Here is a [video walk-through](https://www.youtube.com/watch?v=epktKtLWgHQ) of this repo:
+
+<p align="left">
+<a href="https://www.youtube.com/watch?v=epktKtLWgHQ" target="_blank"><img src="https://img.youtube.com/vi/epktKtLWgHQ/0.jpg" 
+alt="Getting started with Stable Diffusion" width="480" height="360" border="10" /></a>
+</p>
+
+(the commit I used in the video is [this one](https://github.com/gordicaleksa/stable_diffusion_playground/commit/aa19a6e58f3a545c364017230df38ef42fac4307))
 
 And here is a deep dive of the stable diffusion codebase: <TODO: add the video link once uploaded>
 
