@@ -18,6 +18,7 @@ using the code from the [main](https://github.com/huggingface/diffusers/blob/mai
 ## Learning material
 
 Here is a video walk-through of this repo: <TODO: add the video link once uploaded>
+
 And here is a deep dive of the stable diffusion codebase: <TODO: add the video link once uploaded>
 
 ## Acknowledgements
