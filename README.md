@@ -17,7 +17,7 @@ using the code from the [main](https://github.com/huggingface/diffusers/blob/mai
 
 ## Learning material
 
-Here is a video walk-through of this repo: <TODO: add the video link once uploaded>
+Here is a video walk-through of this repo: <TODO: add the video link once uploaded> (the commit I used in the video is [this one](https://github.com/gordicaleksa/stable_diffusion_playground/commit/aa19a6e58f3a545c364017230df38ef42fac4307))
 
 And here is a deep dive of the stable diffusion codebase: <TODO: add the video link once uploaded>
 
