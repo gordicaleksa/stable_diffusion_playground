@@ -74,9 +74,13 @@ There are 2 ways to run this mode:
 1. Run `GENERATE_DIVERSE` and pick the 2 images you like. Grab paths to their latents (you'll find them under `output/<output_dir_name>/latents`) and specify them inside of `src_latent_path` and `trg_latent_path`. After this the code will spherically interpolate `num_imgs` between them and by doing that generate a (mostly) smooth transition from source image into the target one.
 2. Don't specify the latents - they will be generated on the fly so you won't know how your source and target image look like upfront. Everything else remains the same.
 
-As an example I'll take the 2 images from above and interpolate between them here is the resulting gif:
+As an example I'll take the 2 images from above and interpolate between them here is the resulting grid:
 
-TODO: add gif
+<p align="center">
+<img src="imgs/interpolate/interpolation_grid.jpg" width="800px">
+</p>
+
+Note: I generated 200 images but had to subsample 32 only for this image.
 
 ### REPRODUCE mode
 
@@ -111,14 +115,14 @@ And here is a deep dive of the stable diffusion codebase: <TODO: add the video l
 
 ## Connect With Me
 
-💼 [LinkedIn](https://www.linkedin.com/in/aleksagordic/)<br/>
-🐦 [Twitter](https://twitter.com/gordic_aleksa)<br/>
-👨‍👩‍👧‍👦 [Discord](https://discord.gg/peBrCpheKE)<br/>
+💼 [LinkedIn](https://www.linkedin.com/in/aleksagordic/)
+🐦 [Twitter](https://twitter.com/gordic_aleksa)
+👨‍👩‍👧‍👦 [Discord](https://discord.gg/peBrCpheKE)
 
-📺 [YouTube](https://www.youtube.com/c/TheAIEpiphany/)<br/>
-📚 [Medium](https://gordicaleksa.medium.com/)<br/>
-💻 [GitHub](https://github.com/gordicaleksa)<br/>
-📢 [AI Newsletter - one day heh](https://aiepiphany.substack.com/)<br/>
+📺 [YouTube](https://www.youtube.com/c/TheAIEpiphany/)
+📚 [Medium](https://gordicaleksa.medium.com/)
+💻 [GitHub](https://github.com/gordicaleksa)
+📢 [AI Newsletter - one day heh](https://aiepiphany.substack.com/)
 
 ## Acknowledgements
 

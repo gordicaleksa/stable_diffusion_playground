@@ -133,7 +133,7 @@ def generate_images(
     root_dir = os.path.join(os.getcwd(), 'output', output_dir_name)
     imgs_dir = os.path.join(root_dir, "imgs")
     latents_dir = os.path.join(root_dir, "latents")
-    meta_dir = os.path.join(root_dir, "meta")
+    meta_dir = os.path.join(root_dir, "metadata")
     os.makedirs(imgs_dir, exist_ok=True)
     os.makedirs(latents_dir, exist_ok=True)
     if not save_metadata_to_img:  # Only create metadata dir if we need it.
@@ -156,6 +156,7 @@ def generate_images(
 
     if execution_mode == execution_mode.GENERATE_DIVERSE:
         for i in range(num_imgs):
+            print(f'Generating {i+1}. image.')
             init_latent = torch.randn((1, pipe.unet.in_channels, height // 8, width // 8), device=device)
 
             with autocast(device):
@@ -191,6 +192,7 @@ def generate_images(
             else:
                 init_latent = interpolate(float(t), src_init, trg_init)
 
+            print(f'Generating {i+1}. image.')
             with autocast(device):
                 image = pipe(
                     prompt,
@@ -207,6 +209,7 @@ def generate_images(
         assert metadata_path, 'You need to provide the metadata file/image with metadata if you wish to reproduce an image.'
 
         metadata = extract_metadata(metadata_path)
+        print(f'Found metadata info:\n\n{metadata}')
         init_latent = torch.from_numpy(np.load(src_latent_path)).to(device)
 
         with autocast(device):
