@@ -112,7 +112,12 @@ alt="Getting started with Stable Diffusion" width="480" height="360" border="10"
 
 (the commit I used in the video is [this one](https://github.com/gordicaleksa/stable_diffusion_playground/commit/aa19a6e58f3a545c364017230df38ef42fac4307))
 
-And here is a deep dive of the stable diffusion codebase: <TODO: add the video link once uploaded>
+And here is a [deep dive video](https://www.youtube.com/watch?v=f6PtJKdey8E&ab_channel=TheAIEpiphany) going through the stable diffusion codebase:
+
+<p align="left">
+<a href="https://www.youtube.com/watch?v=f6PtJKdey8E" target="_blank"><img src="https://img.youtube.com/vi/f6PtJKdey8E/0.jpg" 
+alt="How does Stable Diffusion work" width="480" height="360" border="10" /></a>
+</p>
 
 ## Connect With Me
 
