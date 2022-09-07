@@ -17,7 +17,19 @@ Here are some images I generated using the prompt: `a painting of an ai robot ha
 </p>
 
 If you generate something cool, tag me on Twitter 🐦 [@gordic_aleksa](https://twitter.com/gordic_aleksa) - I'd love to see what you create.
-    
+
+## Requirements
+- You will need a [facehugging](https://huggingface.co/) account and a corresponding [access token](https://huggingface.co/settings/tokens).
+- [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install) installed and [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed.
+
+## Docker Setup/Usage
+1. Clone repo: `git clone https://github.com/PortalMario/stable_diffusion_playground_docker.git && cd stable_diffusion_playground_docker`
+2. Build Container: `docker build -t "sd_playground" .` 
+3. Set output location: `export output_path=/mnt/c/Users/path/on/my/windows` (Edit the path)
+4. Run Container: `bash start.sh`
+
+You will be asked to provide the huggingface auth-token and your image idea string.
+
 ## Setup
 
 Follow the next steps to run this code:
